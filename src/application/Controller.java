@@ -17,7 +17,7 @@ public class Controller {
 	@FXML
 	private Button botaoDeletar;
 	@FXML
-	private ComboBox listaPerfil;
+	private ComboBox<String> listaPerfil;
 	
 	public static GerenciadorPrincipal ger = new GerenciadorPrincipal();
 	
