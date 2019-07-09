@@ -17,14 +17,8 @@ public class Leitor extends GerenciadorPrincipal {
 		//System.out.println("Construtor do Leitor invocado.");
 	}
 	
-	public Leitor(String perfil) {
-		super();
-		//System.out.println("Construtor do Leitor invocado.");
-		this.associaPerfil(perfil);
-	}
-	
 	public void listarPerfis() {
-		File[] arquivos = this.getEndPer().listFiles();
+		File[] arquivos = this.getEnderecoPerfil().listFiles();
 		
 		for(int i = 0; i < arquivos.length; i++) {
 			System.out.println(arquivos[i].getName().replace(".dat", ""));
@@ -32,7 +26,7 @@ public class Leitor extends GerenciadorPrincipal {
 	}
 	
 	public void listarAtividades() {
-		File[] arquivos = this.getEndAtiv().listFiles();
+		File[] arquivos = this.getEnderecoAtividade().listFiles();
 		
 		for(int i = 0; i < arquivos.length; i++) {
 			System.out.println(arquivos[i].getName().replace(".dat", ""));
@@ -40,7 +34,7 @@ public class Leitor extends GerenciadorPrincipal {
 	}
 	
 	public void listarAtividades(String perfil) {
-		File perfil_path = new File(this.getEndAtiv().getAbsolutePath()+"\\"+perfil);
+		File perfil_path = new File(this.getEnderecoAtividade().getAbsolutePath()+"\\"+perfil);
 		if(perfil_path.exists()) {
 			File[] arquivos = perfil_path.listFiles();
 			
@@ -51,7 +45,7 @@ public class Leitor extends GerenciadorPrincipal {
 	}
 	
 	public Perfil lerPerfil(String nome_perfil) {
-		File perfil_path = new File(this.getEndPer().getAbsolutePath()+"\\"+nome_perfil+".dat");
+		File perfil_path = new File(this.getEnderecoPerfil().getAbsolutePath()+"\\"+nome_perfil+".dat");
 		if(perfil_path.exists()) {
 			try(ObjectInputStream perfilFile = new ObjectInputStream(new BufferedInputStream(new FileInputStream(perfil_path.getAbsolutePath())))){
 				Perfil perfil_obj = (Perfil)perfilFile.readObject();
@@ -68,27 +62,8 @@ public class Leitor extends GerenciadorPrincipal {
 		return null;
 	}
 	
-	
-	public Atividade lerAtividade(String titulo_atividade) {
-		File perfil_path = this.getPerfil();
-		if(perfil_path.exists()) {
-			try (ObjectInputStream atividadeFile = new ObjectInputStream(new BufferedInputStream(new FileInputStream(perfil_path.getAbsolutePath()+"\\"+titulo_atividade+".dat")))){
-				Atividade atividade_obj = (Atividade)atividadeFile.readObject();
-				return atividade_obj;
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException ce) {
-				ce.printStackTrace();
-			} catch (NullPointerException ne) {
-				ne.printStackTrace();
-			}
-		}
-		// Talvez isso cause problemas. Faça um try/catch onde o método é invocado ou arrume isso aqui.
-		return null;
-	}
-	
 	public Atividade lerAtividade(String titulo_atividade, String nome_perfil) {
-		File perfil_path = new File(this.getEndAtiv().getAbsolutePath()+"\\"+nome_perfil);
+		File perfil_path = new File(this.getEnderecoAtividade().getAbsolutePath()+"\\"+nome_perfil);
 		if(perfil_path.exists()) {
 			try (ObjectInputStream atividadeFile = new ObjectInputStream(new BufferedInputStream(new FileInputStream(perfil_path.getAbsolutePath()+"\\"+titulo_atividade+".dat")))){
 				Atividade atividade_obj = (Atividade)atividadeFile.readObject();

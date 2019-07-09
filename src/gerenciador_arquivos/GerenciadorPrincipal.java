@@ -21,7 +21,6 @@ import java.util.stream.Stream;
 public class GerenciadorPrincipal {
 	private File end_info_perf; // Endereço da pasta com os arquivos dos perfis
 	private File end_info_ativ; // Endereço da pasta com as atividades (posteriormente vinculada à pasta do perfil especificado)
-	private File perfil; // Endereço do arquivo de perfil
 	
 	
 	
@@ -30,7 +29,7 @@ public class GerenciadorPrincipal {
 	Metodo          - "GerenciadorPrincipal"
 	Descricao       - Construtor da classe.
 	Entrada         - 
-	Processamento   - Cria os caminhos para as pastas. Verifica se os diretórios existem, e os cria caso não existam.
+	Processamento   - Executa a configuração padrão do método DefaultConfig()
 	Saida           -
 
 	 =================================================== */
@@ -38,7 +37,15 @@ public class GerenciadorPrincipal {
 		DefaultConfig();
 	}
 	
-	// Posso trocar isso para Static depois
+	/* ===================================================
+
+	Metodo          - "DefaultConfig"
+	Descricao       - Especifica a configuração padrão do Gerenciador
+	Entrada         - 
+	Processamento   - Cria os caminhos para as pastas de atividades e de perfis. Verifica se os diretórios existem, e os cria caso não existam.
+	Saida           -
+
+	 =================================================== */
 	public void DefaultConfig() {
 		Path path = FileSystems.getDefault().getPath("").toAbsolutePath();
 		File pasta_dados = new File(path+"\\Dados");
@@ -52,8 +59,9 @@ public class GerenciadorPrincipal {
 		if(!pasta_perfis.exists())
 			pasta_perfis.mkdir();
 
-		setEndPer(pasta_perfis);
-		setEndAtiv(pasta_atividades);
+		setEnderecoPerfil(pasta_perfis);
+		setEnderecoAtividade(pasta_atividades);
+		
 		
 		//System.out.println(this.end_info_ativ.toString());
 		//System.out.println(this.end_info_perf.toString());
@@ -65,16 +73,57 @@ public class GerenciadorPrincipal {
 	
 	/* ===================================================
 
-	Metodo          - "listarArquivos"
-	Descricao       - Retorna o título de cada arquivo do diretório passado como argumento.
+	Metodo          - "getListaArquivos"
+	Descricao       - Obtém os nomes dos arquivos dentro do diretório passado como argumento
 	Entrada         - Um tipo "File" vinculado a um diretório.
-	Processamento   - Faz uma varredura no endereço contido no objeto "File", imprimindo o nome de cada arquivo no diretório.
-	Saida           -
+	Processamento   - Faz uma varredura no endereço contido no objeto "File", incluindo os nomes dos arquivos em um array de strings.
+	Saida           - Um array de strings
 
 	=================================================== */
-	public void listarArquivos(File pasta) {
-		for(File fileEntry : pasta.listFiles()) {
-			System.out.println(fileEntry.getName());
+	public String[] getListaArquivos(File pasta) {
+		int n = pasta.listFiles().length;
+		if (n > 0) {
+			String[] lista_nomes = new String[n];
+			int i = 0;
+			for(File fileEntry : pasta.listFiles()) {
+				lista_nomes[i] = fileEntry.getName().replace(".dat", "");
+				i++;
+			}
+			return lista_nomes;
+		} else {
+			return null;
+		}
+	}
+	
+	/* ===================================================
+
+	Metodo          - "getPerfis"
+	Descricao       - Obtém os nomes dos perfis criados.
+	Entrada         - 
+	Processamento   - (Pelo método getListaArquivos) Faz uma varredura no endereço dos arquivos de perfis, incluindo os nomes dos perfis em um array de strings.
+	Saida           - Um array de strings
+
+	=================================================== */
+	public String[] getPerfis() {
+		return getListaArquivos(this.end_info_perf);
+	}
+	
+	/* ===================================================
+
+	Metodo          - "listarPerfis()"
+	Descricao       - Imprime os nomes dos perfis criados.
+	Entrada         - 
+	Processamento   - (Pelo método getListaArquivos) Faz uma varredura no endereço dos arquivos de perfis, e imprime os nomes de todos os perfis criados.
+	Saida           - 
+
+	=================================================== */
+	public void listarPerfis() {
+		String[] lista_perfis = getListaArquivos(this.end_info_perf);
+		try{
+			for(int i = 0; i < lista_perfis.length; i++)
+				System.out.println(lista_perfis[i]);
+		} catch(NullPointerException e) {
+			//
 		}
 	}
 	
@@ -87,7 +136,7 @@ public class GerenciadorPrincipal {
 	Saida           -
 
 	=================================================== */
-	public void setEndAtiv(File novo_endereco) {
+	public void setEnderecoAtividade(File novo_endereco) {
 		this.end_info_ativ = novo_endereco;
 	}
 
@@ -100,58 +149,18 @@ public class GerenciadorPrincipal {
 	Saida           -
 
 	=================================================== */
-	public void setEndPer(File novo_endereco) {
+	public void setEnderecoPerfil(File novo_endereco) {
 		this.end_info_perf = novo_endereco;
 	}
 	
 	
-	public File getEndPer() {
+	public File getEnderecoPerfil() {
 		return this.end_info_perf;
 	}
 	
-	public File getEndAtiv() {
+	public File getEnderecoAtividade() {
 		return this.end_info_ativ;
 	}
-	
-	public File getPerfil() {
-		return this.perfil;
-	}
-	
-	/* ===================================================
-
-	Metodo          - "setPerfil"
-	Descricao       - Modifica o endereço do arquivo de Perfil vinculado ao Gerenciador.
-	Entrada         - Um tipo "File" vinculado a um arquivo.
-	Processamento   - Altera o atributo "perfil" com o tipo "File" vinculado ao arquivo do perfil que será vinculado.
-	Saida           -
-
-	=================================================== */
-	public void setPerfil(File perfil) {
-		this.perfil = perfil;
-	}
-	
-	/* ===================================================
-
-	Metodo          - "associaPerfil"
-	Descricao       - Faz a associação entre um perfil e o Gerenciador.
-	Entrada         - Um tipo "Perfil".
-	Processamento   - Modifica o atributo "perfil" com o tipo "File" que contém o endereço do arquivo vinculado a um perfil.
-	Saida           - Um tipo "Perfil" com os dados contidos no arquivo do endereço "perfil".
-
-	=================================================== */
-	public Perfil associaPerfil(String perfil) {
-		DefaultConfig();
-		File Perfil_path = gerarArquivo(perfil);
-		setPerfil(Perfil_path);
-		
-		setEndAtiv(new File(this.end_info_ativ.getAbsolutePath()+ "\\" +perfil));
-		if (!this.end_info_ativ.exists())
-			this.end_info_ativ.mkdir();
-		System.out.println(this.end_info_ativ.toString());
-		return (new Leitor()).lerPerfil(perfil);
-	}
-	
-	
 	
 	public boolean buscarArquivo(Perfil perfil) {
 		File Perfil_path = new File(end_info_perf.getAbsolutePath()+"\\"+perfil.getNome()+".dat");
@@ -167,8 +176,8 @@ public class GerenciadorPrincipal {
 	/* ===================================================
 
 	Metodo          - "gerarArquivo"
-	Descricao       - Gera um arquivo do tipo especificado como argumento.
-	Entrada         - Um tipo "Perfil"
+	Descricao       - Gera um arquivo para o perfil especificado como argumento
+	Entrada         - Uma string com o nome do Perfil.
 	Processamento   - Gera um caminho para um arquivo ".dat" nomeado com o nome do Perfil passado como argumento. Verifica sua existência, e o cria caso não exista.
 	Saida           - Um tipo "File" contendo o endereço do arquivo vinculado ao Perfil.
 
@@ -181,7 +190,9 @@ public class GerenciadorPrincipal {
 				try (ObjectOutputStream perfilFile = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(Perfil_path.getAbsolutePath())))){
 					perfilFile.writeObject(new Perfil(Perfil));
 				}
-			
+				
+				(new File(this.end_info_ativ.getAbsolutePath()+"\\"+Perfil)).mkdir();
+				
 				System.out.println("Perfil " + Perfil + " criado");
 				
 			} else {
@@ -225,48 +236,64 @@ public class GerenciadorPrincipal {
 	/* ===================================================
 
 	Metodo          - "removerArquivo"
-	Descricao       - Deleta as informações do perfil
-	Entrada         - 
-	Processamento   - Deleta o arquivo de inforações do perfil, sua pasta de atividades e reinicia as configurações do Gerenciador.
+	Descricao       - Deleta as informações do perfil especificado
+	Entrada         - Uma string com o nome do perfil
+	Processamento   - Deleta o arquivo de inforações do perfil e sua pasta de atividades.
 	Saida           -
 
 	=================================================== */
-	public void removerArquivo() {
-		if(perfil.exists()) {
+	public void removerArquivo(String perfil) {
+		File perfil_path = new File(this.end_info_perf.getAbsolutePath()+"\\"+perfil+".dat");
+		if(perfil_path.exists()) {
 			// Deleta o arquivo com as informações do perfil
-			perfil.delete();
+			perfil_path.delete();
 			
-			// Deleta todas as atividades vinculadas ao perfil
-			File[] arquivos = end_info_ativ.listFiles();
-			for(int i = 0; i < arquivos.length; i++) {
-				if(arquivos[i].isFile()) {
-					removerArquivo(arquivos[i].getName().replace(".dat", ""));
+			File end_atividades = new File(end_info_ativ.getAbsolutePath()+"\\"+perfil);
+			if(end_atividades.exists()) {
+				// Deleta todas as atividades vinculadas ao perfil
+				File[] arquivos = end_atividades.listFiles();
+				for(int i = 0; i < arquivos.length; i++) {
+					if(arquivos[i].isFile()) {
+						removerArquivo(arquivos[i].getName().replace(".dat", ""), perfil);
+					}
 				}
+				// Deleta a pasta de atividades vinculada ao perfil
+				end_atividades.delete();
 			}
-			
-			// Deleta a pasta de atividades do perfil
-			end_info_ativ.delete();
-			
-			// Reinicia o gerenciador para configuração padrão
-			DefaultConfig();
+		} else {
+			System.out.println("Perfil não existe");
 		}
 	}
 	
 	/* ===================================================
 
 	Metodo          - "removerArquivo"
-	Descricao       - Deleta um arquivo de atividade.
-	Entrada         - Uma String com o titulo da atividade.
-	Processamento   - Verifica se a atividade com titulo passado por argumento existe na pasta de atividades vinculada ao perfil pré-definido. Se sim, deleta o arquivo.
+	Descricao       - Deleta um arquivo de atividade de um perfil.
+	Entrada         - Uma String com o titulo da atividade. Uma String com o nome do perfil que possui a atividade.
+	Processamento   - Verifica se a atividade com titulo passado por argumento existe na pasta de atividades vinculada ao perfil especificada. Se sim, deleta o arquivo.
 	Saida           - 
 
 	=================================================== */
-	public void removerArquivo(String titulo_atividade) {
-		File atividade = new File(end_info_ativ.getAbsolutePath()+"\\"+titulo_atividade+".dat");
+	public void removerArquivo(String titulo_atividade, String perfil) {
+		File atividade = new File(end_info_ativ.getAbsolutePath()+"\\"+perfil+"\\"+titulo_atividade+".dat");
 		if(atividade.exists()) {
 			atividade.delete();
 		} else {
 			System.out.println("Atividade "+titulo_atividade+" não existe.");
 		}
+	}
+	
+	/* ===================================================
+
+	Metodo          - "removerPerfil"
+	Descricao       - Deleta os dados de um perfil.
+	Entrada         - Uma String com o nome do Perfil.
+	Processamento   - (Pelo método removerArquivo) Deleta o arquivo de inforações do perfil e sua pasta de atividades.
+	Saida           - 
+	
+	OBS : Fiz esse método para ficar mais legível em outras partes do código quando eu quero especificamente remover um perfil.
+	=================================================== */	
+	public void removerPerfil(String perfil) {
+		removerArquivo(perfil);
 	}
 }

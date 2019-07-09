@@ -16,24 +16,38 @@ public class Controller {
 	private Button botaoCriar;
 	@FXML
 	private Button botaoDeletar;
+	@FXML
+	private ComboBox listaPerfil;
 	
 	public static GerenciadorPrincipal ger = new GerenciadorPrincipal();
 	
 	@FXML
-	public static void initialize() {
+	public void initialize() {
 		//botaoCriar.setDisable(true);
 		//botaoDeletar.setDisable(true);
+		listaPerfil.getItems().addAll(ger.getPerfis());
 	}
 	
 	@FXML
-	public void botaoCriarEvento() {
+	public void botaoCriar() {
 		System.out.println("Botao criar apertado!");
-		ger.gerarArquivo(campoNome.getText());
+		String text = listaPerfil.getEditor().getText();
+        boolean EmptyComboBox = text.isEmpty() || text.trim().isEmpty();
+		if(!EmptyComboBox) {
+        	ger.gerarArquivo(text);
+        	listaPerfil.getItems().add(text);
+		}
 		
 	}
 	
-	public void botaoDeletarEvento() {
+	public void botaoDeletar() {
 		System.out.println("Botao deletar apertado!");
-		System.out.println("Printando o que está no textfield: " + campoNome.getText());
+		String text = listaPerfil.getEditor().getText();
+        boolean EmptyComboBox = text.isEmpty() || text.trim().isEmpty();
+		if(!EmptyComboBox) {
+			System.out.println("Tentando deletar o perfil " + text);
+			listaPerfil.getItems().remove(text);
+        	ger.removerPerfil(text);
+		}
 	}
 }
