@@ -2,7 +2,6 @@ package application;
 
 import java.io.IOException;
 
-import gerenciador_arquivos.Leitor;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +20,7 @@ import lista_pomodoros.ListaDePomodoros;
 import lista_pomodoros.ListaExecucao;
 import lista_pomodoros.ListaPreparacao;
 import perfil.Perfil;
-import pomodoro.Atividade;
+import pomodoro.Pomodoro;
 import utilidades.Utilidades;
 
 
@@ -76,6 +75,7 @@ public class controladorJanelaTimer {
 			listviewExecucao.getItems().remove(listviewExecucao.getSelectionModel().getSelectedItem());
 	}
 	
+	@SuppressWarnings("deprecation")
 	@FXML
 	void cancelar() {
 		try {
@@ -162,7 +162,7 @@ public class controladorJanelaTimer {
 									@Override
 									public void run() {
 										apresentarInfo();
-										imprimeTempo(lExecucao.getUltimo().getData().getDuracao());
+//										imprimeTempo(lExecucao.getUltimo().getData().getDuracao());
 									}
 								}	
 							);
@@ -218,6 +218,7 @@ public class controladorJanelaTimer {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	@FXML
 	void finalizarAtividade() {
 		timerThread.interrupt();
@@ -244,10 +245,10 @@ public class controladorJanelaTimer {
 	void apresentarInfo() {
 		try {
 			String ativTitulo = listviewExecucao.getSelectionModel().getSelectedItem();
-			Atividade ativ_selecionada = (Atividade)perfilAssociado.getLista().buscaItem(ativTitulo).getData();
-			campoDescricao.setText(ativ_selecionada.getDescricao());
+			Pomodoro ativ_selecionada = perfilAssociado.getLista().buscaItem(ativTitulo).getData();
+			campoDescricao.setText(ativ_selecionada.toString());
 			String stringTempo = Utilidades.tempoToString(ativ_selecionada.duracaoParaHMS());
-			campoTempoExecucao.setText("Dura��o: "+stringTempo);
+			campoTempoExecucao.setText("Duracao: "+stringTempo);
 			stringTempo = Utilidades.tempoToString(ativ_selecionada.pausaParaHMS());
 			campoTempoPausa.setText("Pausa: "+stringTempo);
 		} catch (NullPointerException e) {

@@ -1,6 +1,8 @@
 package application;
 
 import perfil.Perfil;
+
+import java.io.File;
 import java.io.IOException;
 import gerenciador_arquivos.*;
 import javafx.fxml.FXML;
@@ -10,6 +12,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.media.AudioClip;
+import javafx.scene.media.MediaException;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -23,7 +27,7 @@ public class controladorJanelaPerfil {
 	@FXML
 	private ComboBox<String> listaPerfil;
 	@FXML
-	private AnchorPane pane;
+	private AnchorPane painel;
 	
 	
 	/* ===================================================
@@ -70,7 +74,7 @@ public class controladorJanelaPerfil {
 			stage.show();
 			
 			// Fecha a janela atual.
-			((Stage)pane.getScene().getWindow()).close();
+			((Stage)painel.getScene().getWindow()).close();
 		} catch(NullPointerException | ClassNotFoundException | IOException e ) {
 			System.out.println(e.getMessage());
 		}

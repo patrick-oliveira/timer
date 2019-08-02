@@ -3,6 +3,10 @@ package atividade;
 import java.io.Serializable;
 
 public class Atividade implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2413697921786188367L;
 	String titulo;
 	String descricao;
 	int duracao;

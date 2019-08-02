@@ -1,7 +1,12 @@
 package application;
 
+import java.io.IOException;
+
 import gerenciador_arquivos.Escritor;
+import gerenciador_arquivos.Leitor;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
@@ -9,14 +14,18 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import perfil.Perfil;
+import pomodoro.Pomodoro;
 import pomodoro.Tarefa;
 import pomodoro.ToDoList;
 import utilidades.Utilidades;
 
 public class controladorEditorToDoList {
 	private Perfil perfil_associado;
-	private String tituloToDoList;
 	private ToDoList todolist;
 	
 	@FXML
@@ -77,6 +86,8 @@ public class controladorEditorToDoList {
 	private ListView<String> listaTarefas;
 	@FXML
 	private Button botaoAdicionar;
+	@FXML
+	private AnchorPane pane;
 
 	
 	public void initialize(Perfil perfil) {
@@ -86,12 +97,50 @@ public class controladorEditorToDoList {
 		carregarComboBoxNTarefas();
 	}
 	
-	public void initialize(Perfil perfil, String todolist) {
+	public void initialize(Perfil perfil, String todolist) throws IOException {
 		this.perfil_associado = perfil;
-		this.tituloToDoList = todolist;
-		botaoCancelarEditar.setDisable(false);
-		carregarComboBoxTempo();
-		carregarComboBoxNTarefas();
+		try {
+			botaoCancelarEditar.setDisable(false);
+			carregarComboBoxTempo();
+			carregarComboBoxNTarefas();
+			carregaAtividade(perfil, todolist);
+		} catch (ClassNotFoundException | NullPointerException | IOException e) {
+			System.out.println("Problema na leitura da atividade: "+ todolist);
+			System.out.println(e.getMessage());
+		
+			// Carrega e prepara o arquivo com as informacoes do layout da janela.
+			FXMLLoader loader = new FXMLLoader (getClass().getResource("janela_atividades.fxml"));
+			Stage stage = new Stage(StageStyle.DECORATED);
+			stage.setScene(new Scene( (Pane) loader.load())); // throws IOException
+			// Instancia o controlador da janela carregada anteriormente, executa a sua funcao de inicializacao,
+			// passando o perfil selecionado como parametro.
+			controladorJanelaAtividades controller = loader.<controladorJanelaAtividades>getController();
+			controller.initialize(perfil);
+			// Apresenta a janela carregada.
+			stage.show();
+			// Fecha a janela atual.
+			((Stage)pane.getScene().getWindow()).close();
+			
+		} 
+	}
+	
+	public void carregaAtividade(Perfil perfil, String todolist) throws ClassNotFoundException, NullPointerException, IOException {
+		Pomodoro ativ = Leitor.lerAtividade(todolist, perfil.getNome());
+		this.todolist = (ToDoList)ativ;
+		campoTitulo.setText(ativ.getTitulo());
+		campoDescricao.setText(ativ.getDescricao());
+		campoAlarmeInicio.setText(ativ.getAlarmeInicio());
+		campoAlarmeFinal.setText(ativ.getAlarmeFim());
+		Integer[] dHMS = Utilidades.secParaHMS(ativ.getDuracao());
+		Integer[] pHMS = Utilidades.secParaHMS(ativ.getPausa());
+		selecionaComboBox(dHMS[0], dHMS[1], dHMS[2], pHMS[1], pHMS[2]);
+		carregaListaTarefas(ativ);
+	}
+	
+	public void carregaListaTarefas(Pomodoro ativ) {
+		for(int i = 0; i < this.todolist.getIdAtual(); i++) {
+			listaTarefas.getItems().add(this.todolist.getTarefas()[i].getTitulo());
+		}
 	}
 	
 	@FXML
@@ -99,7 +148,6 @@ public class controladorEditorToDoList {
 		if(this.todolist != null) {
 			System.out.print("Teste salvando arquivo.");
 			Escritor.escreverAtividade(this.todolist, this.perfil_associado.getNome());
-			tituloToDoList = this.todolist.getTitulo();
 		}
 	}
 	

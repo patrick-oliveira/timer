@@ -15,7 +15,15 @@ public abstract class Pomodoro implements Serializable, GerenciaTimer {
 	private String alarme_inicio;
 	private String alarme_fim;
 	
-	
+	/* ===================================================
+
+	Metodo          - Pomodoro
+	Descricao       - Metodo sobrecarregado. Construtor da classe.
+	Entrada         - 
+	Processamento   - Construtor "padrao" para dar liberdade de customizacao nas subclasses.
+	Saida           -
+
+	 =================================================== */
 	public Pomodoro() {
 		
 	}

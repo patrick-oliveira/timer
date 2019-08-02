@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane"
+<AnchorPane fx:id="painel"
 			fx:controller="application.controladorEditorAtividades"
 			maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
@@ -102,8 +102,8 @@
                         <Insets left="65.0" />
                      </GridPane.margin>
                   </Label>
-                  <Button fx:id="botaoBuscarAlarmeInicio" disable="true" mnemonicParsing="false" text="Buscar" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
-                  <Button fx:id="botaoBuscarAlarmeFim" disable="true" layoutX="119.0" layoutY="173.0" mnemonicParsing="false" text="Buscar" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
+                  <Button fx:id="botaoBuscarAlarmeInicio" onAction="#botaoBuscarAlarmeInicio" disable="true" mnemonicParsing="false" text="Buscar" GridPane.halignment="RIGHT" GridPane.rowIndex="3" />
+                  <Button fx:id="botaoBuscarAlarmeFim" onAction="#botaoBuscarAlarmeFim" disable="true" layoutX="119.0" layoutY="173.0" mnemonicParsing="false" text="Buscar" GridPane.halignment="RIGHT" GridPane.rowIndex="4" />
                </children>
             </GridPane>
             <GridPane GridPane.columnIndex="1" GridPane.rowIndex="2">

@@ -1,8 +1,7 @@
 package gerenciador_arquivos;
-import perfil.Perfil;
-import pomodoro.Atividade;
-import pomodoro.Pomodoro;
 
+import perfil.Perfil;
+import pomodoro.Pomodoro;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;

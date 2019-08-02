@@ -11,22 +11,24 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import perfil.Perfil;
 import pomodoro.*;
 import utilidades.Utilidades;
 
+import java.io.File;
 import java.io.IOException;
 
 import gerenciador_arquivos.*;
 
 public class controladorEditorAtividades {
 	private Perfil perfil_associado;
-	private String atividade;
+	private String tituloAtividade;
 	
 	@FXML
-	private AnchorPane pane;
+	private AnchorPane painel;
 	@FXML
 	private TextField campoTitulo;
 	@FXML
@@ -66,9 +68,12 @@ public class controladorEditorAtividades {
 	/* ===================================================
 
 	Metodo          - initialize
-	Descricao       - Metodo sobrecarregado.
-	Entrada         - 
-	Processamento   - 
+	Descricao       - Metodo sobrecarregado. Inicializa a configuracao basica da janela,
+					quando chamada para criacao de uma nova atividade.
+	Entrada         - Um tipo Perfil com as informacoes do usuario
+	Processamento   - Carrega as listas de numeros para a escolha dos tempos,
+					Ativa o botao de cancelar associado ao processo de criacao,
+					Inicializa os elementos para escolha dos alarmes como desativados.
 	Saida           - 
 
 	=================================================== */	
@@ -82,43 +87,40 @@ public class controladorEditorAtividades {
 	/* ===================================================
 
 	Metodo          - initialize
-	Descricao       - Metodo sobrecarregado.
-	Entrada         - 
-	Processamento   - 
+	Descricao       - Metodo sobrecarregado. Inicializa a configuracao basica da janela,
+					quando chamada para edicao de uma atividade escolhida.
+	Entrada         - Um tipo Perfil com as informacoes do usuario. Uma String com o nome
+					da atividade que sera editada.
+	Processamento   - Faz um try-catch para carregar a atividade. Caso nao seja possivel carrega-la
+					a janela eh fechada e a anterior eh aberta.
 	Saida           - 
 
 	=================================================== */	
 	public void initialize(Perfil perfil, String atividade) throws IOException {
 		this.perfil_associado = perfil;
 		try {
-			this.atividade = atividade;
 			carregaComboBox();
-			carregaAtividade(perfil, atividade);
+			this.tituloAtividade = atividade;
 			botaoCancelarEditar.setDisable(false);
 			ativarDesativarEditorAlarmes(true);
+			carregaAtividade(perfil, atividade); // Lanca as exceptions.
 		} catch (ClassNotFoundException | NullPointerException | IOException e) {
-			System.out.println("Problema na leitura da atividade: "+ atividade);
 			System.out.println(e.getMessage());
-		
-			// Carrega e prepara o arquivo com as informacoes do layout da janela.
+			
 			FXMLLoader loader = new FXMLLoader (getClass().getResource("janela_atividades.fxml"));
 			Stage stage = new Stage(StageStyle.DECORATED);
 			stage.setScene(new Scene( (Pane) loader.load())); // throws IOException
-			// Instancia o controlador da janela carregada anteriormente, executa a sua funcao de inicializacao,
-			// passando o perfil selecionado como parametro.
 			controladorJanelaAtividades controller = loader.<controladorJanelaAtividades>getController();
 			controller.initialize(perfil);
-			// Apresenta a janela carregada.
 			stage.show();
-			// Fecha a janela atual.
-			((Stage)pane.getScene().getWindow()).close();
 			
+			((Stage)painel.getScene().getWindow()).close();
 		} 
 	}
 	
 	/* ===================================================
 
-	Metodo          - initialize
+	Metodo          - botaoBuscarAlarmeInicio
 	Descricao       - Metodo sobrecarregado.
 	Entrada         - 
 	Processamento   - 
@@ -127,12 +129,18 @@ public class controladorEditorAtividades {
 	=================================================== */	
 	@FXML
 	public void botaoBuscarAlarmeInicio() {
-		
+		FileChooser buscador = new FileChooser();
+		File arquivo = buscador.showOpenDialog(null);
+		try {
+			campoAlarmeInicio.setText(arquivo.getAbsolutePath());
+		} catch(NullPointerException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	/* ===================================================
 
-	Metodo          - initialize
+	Metodo          - botaoBuscarAlarmeFim
 	Descricao       - Metodo sobrecarregado.
 	Entrada         - 
 	Processamento   - 
@@ -141,12 +149,19 @@ public class controladorEditorAtividades {
 	=================================================== */	
 	@FXML
 	public void botaoBuscarAlarmeFim() {
+		FileChooser buscador = new FileChooser();
+		File arquivo = buscador.showOpenDialog(null);
 		
+		try {
+			campoAlarmeFim.setText(arquivo.getAbsolutePath());
+		} catch(NullPointerException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 	
 	/* ===================================================
 
-	Metodo          - initialize
+	Metodo          - botaoCancelarEditar
 	Descricao       - Metodo sobrecarregado.
 	Entrada         - 
 	Processamento   - 
@@ -155,7 +170,7 @@ public class controladorEditorAtividades {
 	=================================================== */	
 	@FXML
 	public void botaoCancelarEditar() throws ClassNotFoundException, NullPointerException, IOException {
-		carregaAtividade(perfil_associado, atividade);
+		carregaAtividade(perfil_associado, tituloAtividade);
 	}
 	
 	/* ===================================================
@@ -212,7 +227,7 @@ public class controladorEditorAtividades {
 			}
 
 			Escritor.escreverAtividade(nova_atividade, this.perfil_associado.getNome());
-			atividade = nova_atividade.getTitulo();
+			tituloAtividade = nova_atividade.getTitulo();
 		} catch(NumberFormatException e) {
 			System.out.print("Valor incorreto de tempo inserido\n");
 			System.out.print(e.getMessage());
@@ -272,7 +287,6 @@ public class controladorEditorAtividades {
 		Integer[] dHMS = Utilidades.secParaHMS(ativ.getDuracao());
 		Integer[] pHMS = Utilidades.secParaHMS(ativ.getPausa());
 		selecionaComboBox(dHMS[0], dHMS[1], dHMS[2], pHMS[1], pHMS[2]);
-		
 		campoAlarmeInicio.setText(ativ.getAlarmeInicio());
 		campoAlarmeFim.setText(ativ.getAlarmeFim());
 	}
