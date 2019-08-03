@@ -309,16 +309,20 @@ public class controladorJanelaAtividades {
 																				  // o usuario clica no objeto
 			@Override
 			public void handle(MouseEvent click) { // recebe o objeto do evento do clique
-				if(click.getClickCount() == 2) { // verifica se houve dois cliques
-					// Recupera o titulo da atividade selecionada
-					String itemSelecionado = listaAtividadesUsuario.getSelectionModel().getSelectedItem();
-					// Pega o item correspondente na lista de atividades do usuario e adiciona na lista de preparacao.
-					listaPreparacao.insereInicio(perfil.getLista().buscaItem(itemSelecionado).getData());
-					// Adiciona o titulo da atividade no ListView da lista de preparacao.
-					listaAtividadesExecucao.getItems().add(0, itemSelecionado);
-				} else {
-					// Se apenas um clique foi dado (selecao), apresenta os dados da atividade na interface grafica.
-					apresentarInfo();
+				try {
+					if(click.getClickCount() == 2) { // verifica se houve dois cliques
+						// Recupera o titulo da atividade selecionada
+						String itemSelecionado = listaAtividadesUsuario.getSelectionModel().getSelectedItem();
+						// Pega o item correspondente na lista de atividades do usuario e adiciona na lista de preparacao.
+						listaPreparacao.insereInicio(perfil.getLista().buscaItem(itemSelecionado).getData());
+						// Adiciona o titulo da atividade no ListView da lista de preparacao.
+						listaAtividadesExecucao.getItems().add(0, itemSelecionado);
+					} else {
+						// Se apenas um clique foi dado (selecao), apresenta os dados da atividade na interface grafica.
+						apresentarInfo();
+					}
+				} catch(NullPointerException e) {
+					// Caso em que o usuario tenta clicar duas vezes em uma parte vazia da lista.
 				}
 			}
 		});
@@ -341,14 +345,18 @@ public class controladorJanelaAtividades {
 																				   // o usuario clica no objeto
 			@Override
 			public void handle(MouseEvent click) { // recebe o objeto do evento do clique
-				if(click.getClickCount() == 2) {   // verifica se houve dois cliques
-					// Recebe a String com o titulo da atividade selecionada, e o seu indice no ListView
-					String itemSelecionado = listaAtividadesExecucao.getSelectionModel().getSelectedItem();
-					int indexSelecionado = listaAtividadesExecucao.getSelectionModel().getSelectedIndex();
-					// remove a atividade do objeto listaPreparacao
-					listaPreparacao.remover(itemSelecionado);
-					// remove o titulo da atividade do ListView
-					listaAtividadesExecucao.getItems().remove(indexSelecionado);
+				try {
+					if(click.getClickCount() == 2) {   // verifica se houve dois cliques
+						// Recebe a String com o titulo da atividade selecionada, e o seu indice no ListView
+						String itemSelecionado = listaAtividadesExecucao.getSelectionModel().getSelectedItem();
+						int indexSelecionado = listaAtividadesExecucao.getSelectionModel().getSelectedIndex();
+						// remove a atividade do objeto listaPreparacao
+						listaPreparacao.remover(itemSelecionado);
+						// remove o titulo da atividade do ListView
+						listaAtividadesExecucao.getItems().remove(indexSelecionado);
+					}
+				} catch(IndexOutOfBoundsException e) {
+					// Caso em que o usuario tenta interagir com a lista vazia.
 				}
 			}
 		});

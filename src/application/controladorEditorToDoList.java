@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.IOException;
 
 import gerenciador_arquivos.Escritor;
@@ -16,6 +17,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import perfil.Perfil;
@@ -87,9 +89,20 @@ public class controladorEditorToDoList {
 	@FXML
 	private Button botaoAdicionar;
 	@FXML
-	private AnchorPane pane;
+	private AnchorPane painel;
 
 	
+	/* ===================================================
+
+	Metodo          - initialize
+	Descricao       - Metodo de inicializacao da interface, quando aberta para criacao.
+	Entrada         - Um tipo Perfil com as informacoes do usuario.
+	Processamento   - Alimenta as listas de numeros (ComboBox) para a selecao dos tempos,
+					ativa o botao "Cancelar" vinculado ao processo de criacao. Associa a janela
+					com o perfil do usuario.
+	Saida           - 
+
+	=================================================== */
 	public void initialize(Perfil perfil) {
 		this.perfil_associado = perfil;
 		botaoCancelarCriar.setDisable(false);
@@ -97,10 +110,21 @@ public class controladorEditorToDoList {
 		carregarComboBoxNTarefas();
 	}
 	
+	/* ===================================================
+
+	Metodo          - initialize
+	Descricao       - Metodo de inicializacao da interface, quando aberta para edicao.
+	Entrada         - Um tipo Perfil com as informacoes do usuario, uma string com o titulo
+					da lista de tarefas.
+	Processamento   - Carrega a interface com as informacoes da atividade que sera editada.
+	Saida           - 
+
+	=================================================== */
 	public void initialize(Perfil perfil, String todolist) throws IOException {
 		this.perfil_associado = perfil;
 		try {
 			botaoCancelarEditar.setDisable(false);
+			ativarDesativarEditorTarefas(false);
 			carregarComboBoxTempo();
 			carregarComboBoxNTarefas();
 			carregaAtividade(perfil, todolist);
@@ -119,30 +143,20 @@ public class controladorEditorToDoList {
 			// Apresenta a janela carregada.
 			stage.show();
 			// Fecha a janela atual.
-			((Stage)pane.getScene().getWindow()).close();
+			((Stage)painel.getScene().getWindow()).close();
 			
 		} 
 	}
 	
-	public void carregaAtividade(Perfil perfil, String todolist) throws ClassNotFoundException, NullPointerException, IOException {
-		Pomodoro ativ = Leitor.lerAtividade(todolist, perfil.getNome());
-		this.todolist = (ToDoList)ativ;
-		campoTitulo.setText(ativ.getTitulo());
-		campoDescricao.setText(ativ.getDescricao());
-		campoAlarmeInicio.setText(ativ.getAlarmeInicio());
-		campoAlarmeFinal.setText(ativ.getAlarmeFim());
-		Integer[] dHMS = Utilidades.secParaHMS(ativ.getDuracao());
-		Integer[] pHMS = Utilidades.secParaHMS(ativ.getPausa());
-		selecionaComboBox(dHMS[0], dHMS[1], dHMS[2], pHMS[1], pHMS[2]);
-		carregaListaTarefas(ativ);
-	}
-	
-	public void carregaListaTarefas(Pomodoro ativ) {
-		for(int i = 0; i < this.todolist.getIdAtual(); i++) {
-			listaTarefas.getItems().add(this.todolist.getTarefas()[i].getTitulo());
-		}
-	}
-	
+	/* ===================================================
+
+	Metodo          - botaoOK
+	Descricao       - Metodo associado ao botao "OK"
+	Entrada         - 
+	Processamento   - Escreve a atividade criada em um arquivo para backup.
+	Saida           - 
+
+	=================================================== */
 	@FXML
 	public void botaoOK() {
 		if(this.todolist != null) {
@@ -151,10 +165,97 @@ public class controladorEditorToDoList {
 		}
 	}
 	
+	/* ===================================================
+
+	Metodo          - botaoBuscarAlarmeInicio
+	Descricao       - Metodo associado ao botao "Buscar" para encontrar um arquivo de audio do
+					alarme de inicio
+	Entrada         - 
+	Processamento   - Abre um "FileChooser" para que o usuario encontre um arquivo. O endereco
+					do arquivo selecionado eh apresentado em um campo de texto na interface
+					grafica.
+	Saida           - 
+
+	=================================================== */	
+	@FXML
+	public void botaoBuscarAlarmeInicio() {
+		FileChooser buscador = new FileChooser();
+		File arquivo = buscador.showOpenDialog(null);
+		try {
+			campoAlarmeInicio.setText(arquivo.getAbsolutePath());
+		} catch(NullPointerException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	/* ===================================================
+
+	Metodo          - botaoBuscarAlarmeFim
+	Descricao       - Metodo associado ao botao "Buscar" para encontrar um arquivo de audio do
+					alarme de termino.
+	Entrada         - 
+	Processamento   - Abre um "FileChooser" para que o usuario encontre um arquivo. O endereco
+					do arquivo selecionado eh apresentado em um campo de texto na interface
+					grafica.
+	Saida           - 
+
+	=================================================== */	
+	@FXML
+	public void botaoBuscarAlarmeFim() {
+		FileChooser buscador = new FileChooser();
+		File arquivo = buscador.showOpenDialog(null);
+		
+		try {
+			campoAlarmeFinal.setText(arquivo.getAbsolutePath());
+		} catch(NullPointerException e) {
+			System.out.println(e.getMessage());
+		}
+	}
+	
+	/* ===================================================
+
+	Metodo          - botaoAdicionarTarefas
+	Descricao       - Metodo associado ao botao "Adicionar Tarefas", que permite ao usuario
+					comecar a adicionar tarefas na lista.
+	Entrada         - 
+	Processamento   - Se o usuario insere um titulo e um numero > 0 de tarefas para a lista,
+					eh criada uma instancia de uma ToDoList, contendo um vetor de tarefas,
+					e os elementos da interface associados a criacao de tarefas sao habilitados
+					para interacao com o usuario. O objeto ToDoList eh instanciado com o construtor
+					adequado, a depender da escolha do usuario de customizar ou nao o alarme.
+	Saida           - 
+
+	=================================================== */
+	@FXML
+	public void botaoAdicionarTarefas() {
+		int numeroTarefas = Integer.parseInt(campoNumeroTarefas.getEditor().getText());
+		if(numeroTarefas > 0 && !campoTitulo.getText().isEmpty()) {
+			if(!checkAlarme.isSelected()) {
+				this.todolist = new ToDoList(campoTitulo.getText(), campoDescricao.getText(), numeroTarefas);
+			} else {
+				String alarme_inicio = campoAlarmeInicio.getText();
+				String alarme_final = campoAlarmeFinal.getText();
+				this.todolist = new ToDoList(campoTitulo.getText(), campoDescricao.getText(), numeroTarefas, alarme_inicio, alarme_final);
+			}
+			ativarDesativarEditorTarefas(false);
+		}
+	}
+	
+	/* ===================================================
+
+	Metodo          - botaoAdicionar
+	Descricao       - Metodo associado ao botao "Adicionar", para adicionar tarefas na lista
+	Entrada         - 
+	Processamento   - Se o usuario especificou um titulo para a tarefa, faz a instanciacao
+					da tarefa e insercao, se o vetor de tarefas da lista nao esta totalmente
+					preenchida.
+	Saida           - 
+
+	=================================================== */
 	@FXML
 	public void botaoAdicionar() {
 		String titulo = campoTituloTarefa.getText();
-		if(titulo != null && !titulo.isEmpty() && !this.todolist.estaCheio()) {
+		if(!titulo.isEmpty()) {
 			System.out.println("Teste adicao");
 			Integer[] duracao = new Integer[3];
 			Integer[] pausa = new Integer[2];
@@ -167,20 +268,21 @@ public class controladorEditorToDoList {
 			pausa[1] = campoPausaSegundo.getSelectionModel().getSelectedItem();
 			
 			Tarefa nova_tarefa = new Tarefa(titulo, Utilidades.hmsParaSec(duracao[0], duracao[1], duracao[2]), Utilidades.hmsParaSec(pausa[0], pausa[1]));
-			this.todolist.adicionaTarefa(nova_tarefa);
-			listaTarefas.getItems().add(nova_tarefa.toString());
+			if(this.todolist.adicionaTarefa(nova_tarefa))
+				listaTarefas.getItems().add(nova_tarefa.toString());
 		}
 	}
 	
-	@FXML
-	public void botaoAdicionarTarefas() {
-		int numeroTarefas = Integer.parseInt(campoNumeroTarefas.getEditor().getText());
-		if(numeroTarefas > 0 && !campoTitulo.getText().isEmpty()) {
-			this.todolist = new ToDoList(campoTitulo.getText(), campoDescricao.getText(), numeroTarefas);
-			ativarDesativarEditorTarefas(false);
-		}
-	}
-	
+	/* ===================================================
+
+	Metodo          - ativarDesativarEditorTarefas
+	Descricao       - Metodo auxiliar para habilitacao ou desabilitacao dos itens da interface
+					relativos a edicao de tarefas
+	Entrada         - Um boolean com o estado dos objetos da interface
+	Processamento   - Faz a mudanca de estado habilitado/desabilitado.
+	Saida           - 
+
+	=================================================== */
 	public void ativarDesativarEditorTarefas(boolean estado) {
 		labelTituloTarefa.setDisable(estado);
 		labelDuracaoTarefa.setDisable(estado);
@@ -199,15 +301,16 @@ public class controladorEditorToDoList {
 		listaTarefas.setDisable(estado);
 	}
 	
-	@FXML
-	public void checkboxAlarme() {
-		if(!checkAlarme.isSelected()) {
-			ativarDesativarEditorAlarmes(true);
-		} else {
-			ativarDesativarEditorAlarmes(false);
-		}
-	}
-	
+	/* ===================================================
+
+	Metodo          - ativarDestivarEditorAlarmes
+	Descricao       - Metodo auxiliar para a habilitacao ou desabilitacao dos itens da interfaces
+					relacionados a edicao dos alarmes.
+	Entrada         - Um boolean com o novo estado.
+	Processamento   - Faz a mudanca de estado habilitado/desabilitado.
+	Saida           - 
+
+	=================================================== */
 	public void ativarDesativarEditorAlarmes(boolean estado) {
 		labelAlarmeInicio.setDisable(estado);
 		labelAlarmeFinal.setDisable(estado);
@@ -217,6 +320,74 @@ public class controladorEditorToDoList {
 		campoAlarmeFinal.setDisable(estado);
 	}
 	
+	/* ===================================================
+
+	Metodo          - checkboxEvent
+	Descricao       - Metodo relacionado ao Checkbox da interface, que ativa ou desativa a edicao
+					de alarmes.
+	Entrada         - 
+	Processamento   - Verifica se o usuario ativou ou desativou o checkbox.
+	Saida           - 
+
+	=================================================== */
+	@FXML
+	void checkboxEvent() {
+		if(!checkAlarme.isSelected()) {
+			ativarDesativarEditorAlarmes(true);
+		} else {
+			ativarDesativarEditorAlarmes(false);
+		}
+	}
+	
+	/* ===================================================
+
+	Metodo          - carregaAtividade
+	Descricao       - Metodo auxiliar para carregar as informacoes de uma atividade e apresentar
+					na interface grafica
+	Entrada         - Um tipo Perfil com as informacoes do usuario, e uma String com o titulo da
+					lista de tarefas.
+	Processamento   - 
+	Saida           - 
+
+	=================================================== */
+	public void carregaAtividade(Perfil perfil, String todolist) throws ClassNotFoundException, NullPointerException, IOException {
+		Pomodoro ativ = Leitor.lerAtividade(todolist, perfil.getNome());
+		this.todolist = (ToDoList)ativ;
+		campoTitulo.setText(ativ.getTitulo());
+		campoDescricao.setText(ativ.getDescricao());
+		campoAlarmeInicio.setText(ativ.getAlarmeInicio());
+		campoAlarmeFinal.setText(ativ.getAlarmeFim());
+		carregaListaTarefas(ativ);
+	}
+	
+	/* ===================================================
+
+	Metodo          - carregaListaTarefas
+	Descricao       - Metodo auxiliar para carregar as tarefas no vetor de uma ToDoList e
+					apresentar na lista de visualizacao da interface.
+	Entrada         - Um tipo pomodoro com a ToDoList.
+	Processamento   - 
+	Saida           - 
+
+	=================================================== */
+	public void carregaListaTarefas(Pomodoro ativ) {
+		for(int i = 0; i < this.todolist.getIdAtual(); i++) {
+			listaTarefas.getItems().add(this.todolist.getTarefas()[i].getTitulo());
+		}
+	}
+	
+	/* ===================================================
+
+	Metodo          - carregarComboBoxNTarefas
+	Descricao       - Metodo auxiliar para configurar os itens da interface. Alimenta a lista
+					de selecao da quantidade de tarefas na lista. Apesar de ser um numero
+					predefinido de opcoes, o usuario pode inserir um valor diferente.
+	Entrada         - 
+	Processamento   - Gera um vetor com um numero predefinido de inteiros e os insere na lista
+	 				de selecao da interface.
+	Saida           - 
+
+	=================================================== */
 	public void carregarComboBoxNTarefas() {
 		Integer[] numeroTarefas = new Integer[100];
 		for(int i = 0; i < 100; i++) {
@@ -226,6 +397,17 @@ public class controladorEditorToDoList {
 		campoNumeroTarefas.getSelectionModel().select(0);
 	}
 	
+	/* ===================================================
+
+	Metodo          - carregarComboBoxTempo
+	Descricao       - Metodo auxiliar para configurar os itens da interface. Alimenta as listas
+					de selecao dos tempos de duracao das tarefas.
+	Entrada         - 
+	Processamento   - Gera vetores com inteiros para as horas, minutos e segundos, e passa para
+					as listas de selecao (ComboBox) da interface.
+	Saida           - 
+
+	=================================================== */
 	public void carregarComboBoxTempo() {
 		Integer[] hr = new Integer[25];
 		Integer[] min = new Integer[60];
@@ -247,6 +429,20 @@ public class controladorEditorToDoList {
 		selecionaComboBox(0, 25, 0, 5, 0);
 	}
 	
+	/* ===================================================
+
+	Metodo          - selecionaComboBox
+	Descricao       - Metodo auxiliar a inicializacao de elementos da interface
+	Entrada         - dhr: Um Integer com o numero de horas de duracao.
+					  dMin: Um Integer com o numero de minutos de duracao.
+					  dSec: Um Integer com o numero de segundos de duracao.
+					  pMin: Um Integer com o numero de minutos de pausa.
+					  pSec: Um Integer com o numero de segundos de pausa.
+	Processamento   - Seleciona os itens especificados nas listas da interface
+					(ComboBox).
+	Saida           - 
+
+	=================================================== */
 	public void selecionaComboBox(Integer dHr, Integer dMin, Integer dSec,
 			 					  Integer pMin, Integer pSec) {
 		campoDuracaoHora.getSelectionModel().select(dHr);

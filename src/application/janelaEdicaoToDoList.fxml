@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controladorEditorToDoList">
+<AnchorPane fx:id="painel" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controladorEditorToDoList">
    <children>
       <GridPane layoutX="150.0" layoutY="333.0" prefHeight="500.0" prefWidth="700.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <columnConstraints>
@@ -98,11 +98,11 @@
                               <Insets right="5.0" />
                            </GridPane.margin>
                         </Label>
-                        <Button fx:id="botaoAdicionarTarefas" mnemonicParsing="false" onAction="#botaoAdicionarTarefas" text="Adicionar Tarefas" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+                        <Button fx:id="botaoAdicionarTarefas" onAction="#botaoAdicionarTarefas" mnemonicParsing="false" text="Adicionar Tarefas" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
                         <TextField fx:id="campoTitulo" GridPane.columnIndex="1" />
                         <TextArea fx:id="campoDescricao" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <ComboBox fx:id="campoNumeroTarefas" editable="true" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <CheckBox fx:id="checkAlarme" mnemonicParsing="false" onAction="#checkboxAlarme" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <CheckBox fx:id="checkAlarme" mnemonicParsing="false" onAction="#checkboxEvent" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <TextField fx:id="campoAlarmeInicio" disable="true" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <GridPane.margin>
                               <Insets left="55.0" />
@@ -113,8 +113,8 @@
                               <Insets left="55.0" />
                            </GridPane.margin>
                         </TextField>
-                        <Button fx:id="botaoBuscarAlarmeFinal" disable="true" mnemonicParsing="false" text="Buscar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <Button fx:id="botaoBuscarAlarmeInicio" disable="true" layoutX="126.0" layoutY="247.0" mnemonicParsing="false" text="Buscar" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Button fx:id="botaoBuscarAlarmeFinal" onAction="#botaoBuscarAlarmeFim"  disable="true" mnemonicParsing="false" text="Buscar" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Button fx:id="botaoBuscarAlarmeInicio" onAction="#botaoBuscarAlarmeInicio"  disable="true" layoutX="126.0" layoutY="247.0" mnemonicParsing="false" text="Buscar" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                      </children>
                   </GridPane>
                   <GridPane GridPane.rowIndex="1">

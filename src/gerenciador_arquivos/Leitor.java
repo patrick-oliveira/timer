@@ -74,7 +74,8 @@ public class Leitor extends GerenciadorPrincipal {
 			Perfil perfil_obj = (Perfil)perfilFile.readObject();
 			return perfil_obj;
 		} catch (IOException | ClassNotFoundException | NullPointerException e) {
-			throw e;
+			System.out.println(e.getMessage());
+			return null;
 		} 
 	}
 	
@@ -109,7 +110,8 @@ public class Leitor extends GerenciadorPrincipal {
 			Pomodoro atividade_obj = (Pomodoro)atividadeFile.readObject();
 			return atividade_obj;
 		} catch (IOException | ClassNotFoundException | NullPointerException e) {
-			throw e;
+			System.out.println(e.getMessage());
+			return null;
 		}
 	}
 	

@@ -1,8 +1,6 @@
 package application;
 
 import perfil.Perfil;
-
-import java.io.File;
 import java.io.IOException;
 import gerenciador_arquivos.*;
 import javafx.fxml.FXML;
@@ -12,8 +10,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.MediaException;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -121,6 +117,7 @@ public class controladorJanelaPerfil {
 		if(!EmptyComboBox) {
 			listaPerfil.getItems().remove(text);
         	GerenciadorPrincipal.removerArquivo(text);
+        	listaPerfil.getEditor().setText("");
 		}
 	}
 }

@@ -35,6 +35,17 @@ public class ToDoList extends Pomodoro implements Serializable, GerenciaTimer {
 		this.idAtual = 0;
 		listaTarefas = new Tarefa[numeroTarefas];
 	}
+	
+	public ToDoList(String titulo, String descricao, int numeroTarefas, String alarme_inicio, String alarme_fim) {
+		super();
+		this.setAlarmeInicio(alarme_inicio);
+		this.setAlarmeFim(alarme_fim);
+		setTitulo(titulo);
+		setDescricao(descricao);
+		setMaxTarefas(numeroTarefas);
+		this.idAtual = 0;
+		listaTarefas = new Tarefa[numeroTarefas];
+	}
 
 	/* ===================================================
 
@@ -292,7 +303,7 @@ public class ToDoList extends Pomodoro implements Serializable, GerenciaTimer {
 					break;
 				}
 			}
-			tempoAtual = getPausa();
+			tempoAtual = listaTarefas[i].getPausa();
 			while(true) {
 				Thread.sleep(1000);
 				tempoAtual--;
@@ -302,7 +313,6 @@ public class ToDoList extends Pomodoro implements Serializable, GerenciaTimer {
 				}
 			}
 			i++;
-			System.out.println("Tarefa "+listaTarefas[i].getTitulo()+" concluida.");
 		}
 	}
 	
