@@ -19,8 +19,13 @@ Objetiva-se construir uma ferramenta simples de gerenciamento de tempo, tendo a 
 
 O projeto, no seu escopo básico, possuirá:
 ●	Possibilidade de criação de atividades com título, descrição, tempo de duração, tempo de descanso, alarme (áudio e mensagem de texto), a serem especificados pelo usuário ou inicializados com parâmetros padrões.
+
 ●	Criação de perfil de usuário.
+
 ●	Exportação de atividades indexados por usuários, como backup, carregado quando um usuário inicia a sessão.
+
 ●	Edição, remoção e visualização de atividades do arquivo de cada usuário.
+
 ●	Ativação de atividades, com timer, com opção de pausar, encerrar e recomeçar.
+
 ●	Inclusão de atividades em uma lista de ativação automática.
