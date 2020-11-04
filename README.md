@@ -2,7 +2,7 @@
 
 Projeto final de programação realizado para a disciplina de Programação Orientada a Objetos na UFABC. O projeto consiste em um timer e organizador de tarefas programado em Java, com interface gráfica construída utilizando Java FX. O projeto buscou a implementação dos conceitos básicos de orientação a objetos, padrões de projeto - como um extra, a implementação do timer tirou proveito das ferramentas de multithreading disponibilizadas pela linguagem Java.
 
-O relatório final submetido para a conclusão da disciplina, contendo uma descrição detalhada do funcionamento do programa, pode ser lido no arquivo "relatório".
+O relatório final submetido para a conclusão da disciplina, contendo uma descrição detalhada do funcionamento do programa, pode ser lido no arquivo "relatório". A versão final e executável do programa pode ser acessada pelo arquivo ".jar".
 
 ### Proposta do Projeto
 
